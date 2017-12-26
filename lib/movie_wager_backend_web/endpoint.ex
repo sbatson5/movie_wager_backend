@@ -38,6 +38,8 @@ defmodule MovieWagerBackendWeb.Endpoint do
     key: "_movie_wager_backend_key",
     signing_salt: "va52T9y5"
 
+  plug CORSPlug, origin: ["http://localhost:4200"]
+
   plug MovieWagerBackendWeb.Router
 
   @doc """

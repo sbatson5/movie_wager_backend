@@ -9,18 +9,16 @@ defmodule MovieWagerBackendWeb.Router do
     plug :put_secure_browser_headers
   end
 
-  pipeline :api do
-    plug :accepts, ["json"]
-  end
-
-  scope "/", MovieWagerBackendWeb do
-    pipe_through :browser # Use the default browser stack
-
-    get "/", PageController, :index
+  pipeline :json_api do
+    plug :accepts, ["json-api"]
+    plug JaSerializer.Deserializer
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", MovieWagerBackendWeb do
-  #   pipe_through :api
-  # end
+  scope "/api", MovieWagerBackendWeb do
+    pipe_through :json_api
+    resources "/rounds", RoundController
+    resources "/wagers", WagerController
+    resources "/auth", UserController, only: [:create]
+  end
 end
