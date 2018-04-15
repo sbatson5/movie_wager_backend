@@ -14,6 +14,7 @@ defmodule MovieWagerBackend.Application do
       supervisor(MovieWagerBackendWeb.Endpoint, []),
       # Start your own worker by calling: MovieWagerBackend.Worker.start_link(arg1, arg2, arg3)
       # worker(MovieWagerBackend.Worker, [arg1, arg2, arg3]),
+      worker(MovieWagerBackend.BoxOfficeCollector, []),
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
