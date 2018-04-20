@@ -11,7 +11,7 @@ defmodule MovieWagerBackend.BoxOfficeCollector do
   end
 
   def handle_info(:work, state) do
-    MovieWagerBackend.Movie.update_rounds_without_amounts()
+    MovieWagerBackend.Movie.BoxofficeMojo.update_rounds_without_amounts()
 
     schedule_work()
     {:noreply, state}
