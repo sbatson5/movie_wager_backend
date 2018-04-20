@@ -6,7 +6,7 @@ defmodule MovieWagerBackend.Movie do
   import Ecto.Query, warn: false
   alias MovieWagerBackend.Repo
 
-  alias MovieWagerBackend.Movie.Round
+  alias MovieWagerBackend.Movie.{Round,BoxofficeMojo}
 
   def list_rounds do
     Repo.all(Round)
@@ -114,6 +114,12 @@ defmodule MovieWagerBackend.Movie do
     attrs = get_wager_relationships_with_local_id(relationship_params)
       |> Map.merge(attrs)
 
+    wager
+    |> Wager.changeset(attrs)
+    |> Repo.update()
+  end
+
+  def update_wager(%Wager{} = wager, attrs) do
     wager
     |> Wager.changeset(attrs)
     |> Repo.update()

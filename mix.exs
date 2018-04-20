@@ -43,7 +43,8 @@ defmodule MovieWagerBackend.Mixfile do
       {:cowboy, "~> 1.0"},
       {:ja_serializer, github: "vt-elixir/ja_serializer"},
       {:httpoison, "0.13.0", override: true},
-      {:cors_plug, "~> 1.2"}
+      {:cors_plug, "~> 1.2"},
+      {:floki, "~> 0.20.0"}
     ]
   end
 
