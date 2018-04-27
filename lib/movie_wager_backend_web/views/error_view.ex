@@ -4,7 +4,7 @@ defmodule MovieWagerBackendWeb.ErrorView do
   alias JaSerializer.ErrorSerializer
 
   def render("404.json-api", _assigns) do
-    %{title: "Page Not Found", code: 404}
+    %{title: "Not Found", code: 404}
     |> ErrorSerializer.format()
   end
 

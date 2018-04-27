@@ -54,8 +54,7 @@ defmodule MovieWagerBackend.Movie do
     |> Repo.all
   end
 
-  def list_wagers_by_user_and_round(google_id, round_id) do
-    user_id = get_user_id(google_id)
+  def list_wagers_by_user_and_round(user_id, round_id) do
     Wager
     |> Ecto.Query.preload([:user, :round])
     |> where(user_id: ^user_id)
@@ -77,22 +76,8 @@ defmodule MovieWagerBackend.Movie do
   def preload_wager_relationships(wager), do: Repo.preload(wager, [:user, :round])
 
   defp get_wager_relationship_ids(%{"round" => round_params, "user" => user_params}) do
-    user_id =
-      user_params
-      |> get_id()
-      |> get_user_id()
     %{
-      "user_id" => user_id,
-      "round_id" => get_id(round_params)
-    }
-  end
-
-  def get_wager_relationships_with_local_id(%{"round" => round_params, "user" => user_params}) do
-    user_id =
-      user_params
-      |> get_id()
-    %{
-      "user_id" => user_id,
+      "user_id" => get_id(user_params),
       "round_id" => get_id(round_params)
     }
   end
@@ -111,7 +96,7 @@ defmodule MovieWagerBackend.Movie do
   end
 
   def update_wager(%Wager{} = wager, attrs, relationship_params) do
-    attrs = get_wager_relationships_with_local_id(relationship_params)
+    attrs = get_wager_relationship_ids(relationship_params)
       |> Map.merge(attrs)
 
     wager
