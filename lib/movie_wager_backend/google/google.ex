@@ -14,6 +14,12 @@ defmodule MovieWagerBackend.Google do
 
   def get_user!(id), do: Repo.get!(User, id)
 
+  def get_user_by_google_id(google_id) do
+    User
+    |> where(google_id: ^google_id)
+    |> Repo.one()
+  end
+
   def create_user(attrs \\ %{}) do
     %User{}
     |> User.changeset(attrs)
@@ -55,10 +61,7 @@ defmodule MovieWagerBackend.Google do
       "verified_email" => google_user_info["verifiedEmail"]
     }
 
-    User
-    |> where(google_id: ^google_id)
-    |> Repo.one()
-    |> case do
+    case get_user_by_google_id(google_id) do
       nil -> create_new_user(google_id, params)
       user -> update_user(user, params)
     end

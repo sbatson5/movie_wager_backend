@@ -11,6 +11,7 @@ defmodule MovieWagerBackendWeb.Router do
 
   pipeline :json_api do
     plug :accepts, ["json-api"]
+    plug :fetch_session
     plug JaSerializer.Deserializer
   end
 
@@ -20,5 +21,7 @@ defmodule MovieWagerBackendWeb.Router do
     resources "/rounds", RoundController
     resources "/wagers", WagerController
     resources "/auth", UserController, only: [:create]
+    get "/session", UserController, :show_session
+    delete "/session", UserController, :delete_session
   end
 end
