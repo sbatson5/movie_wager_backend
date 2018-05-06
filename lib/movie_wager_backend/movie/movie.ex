@@ -73,6 +73,12 @@ defmodule MovieWagerBackend.Movie do
     |> Repo.insert()
   end
 
+  def has_round_expired?(round_id) do
+    round = get_round!(round_id)
+    now = DateTime.utc_now()
+    Date.compare(round.end_date, now) == :lt
+  end
+
   def preload_wager_relationships(wager), do: Repo.preload(wager, [:user, :round])
 
   defp get_wager_relationship_ids(%{"round" => round_params, "user" => user_params}) do
