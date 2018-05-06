@@ -9,6 +9,9 @@ defmodule MovieWagerBackend.Movie.Round do
     field :end_date, :date
     field :start_date, :date
     field :title, :string
+    field :plot, :string
+    field :poster, :string
+    field :website, :string
 
     timestamps()
   end
@@ -16,7 +19,7 @@ defmodule MovieWagerBackend.Movie.Round do
   @doc false
   def changeset(%Round{} = round, attrs) do
     round
-    |> cast(attrs, [:code, :start_date, :end_date, :box_office_amount, :title])
+    |> cast(attrs, [:code, :start_date, :end_date, :box_office_amount, :title, :plot, :poster, :website])
     |> validate_required([:code, :start_date, :end_date, :title])
   end
 end
