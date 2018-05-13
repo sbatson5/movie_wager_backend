@@ -5,6 +5,21 @@ defmodule MovieWagerBackend.Movie.BoxofficeMojo do
   alias MovieWagerBackend.Movie
   alias MovieWagerBackend.Movie.Round
 
+  @months %{
+    "January" => 1, "February" => 2, "March" => 3, "April" => 4,
+    "May" => 5, "June" => 6, "July" => 7, "August" => 8,
+    "September" => 9, "October" => 10, "November" => 11, "December" => 12
+  }
+
+  def fetch_release_date(code) do
+    case get_boxoffice_info_dom(code) do
+      {:ok, date} ->
+        %{"end_date" => date}
+      _->
+        %{}
+    end
+  end
+
   def update_rounds_without_amounts() do
     unfinished_rounds = Repo.all(from r in Round,
       where: is_nil(r.box_office_amount))
@@ -51,9 +66,35 @@ defmodule MovieWagerBackend.Movie.BoxofficeMojo do
     end
   end
 
+  defp get_boxoffice_info_dom(code) do
+    code
+    |> get_movie_info_url()
+    |> HTTPoison.get()
+    |> case do
+      {:ok, response} ->
+        find_release_date(response.body)
+      _ ->
+        nil
+    end
+  end
+
   defp get_movie_url(%Round{code: code}) do
     box_office_domain = "http://www.boxofficemojo.com/movies/"
     "#{box_office_domain}?page=weekend&id=#{code}.htm&sort=weeknum&order=ASC&p=.htm"
+  end
+
+  defp get_movie_info_url(code), do: "http://www.boxofficemojo.com/movies/?id=#{code}.htm"
+
+  defp find_release_date(body) do
+    Floki.find(body, "nobr")
+    |> Enum.at(0)
+    |> case do
+      nil ->
+        nil
+      node ->
+        Floki.text(node)
+        |> release_date()
+    end
   end
 
   defp find_weekend_amount_node(body) do
@@ -72,5 +113,18 @@ defmodule MovieWagerBackend.Movie.BoxofficeMojo do
     amount
     |> String.replace("$", "")
     |> String.replace(",", "")
+  end
+
+  defp release_date(date_text) do
+    [month, day, year] =
+      date_text
+      |> String.replace(",", "")
+      |> String.split(" ")
+
+    month = Map.get(@months, month)
+    year = String.to_integer(year)
+    day = String.to_integer(day)
+
+    Date.from_erl({year, month, day})
   end
 end

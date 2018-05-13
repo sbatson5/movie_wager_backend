@@ -11,11 +11,12 @@ defmodule MovieWagerBackend.Movie.OMDB do
         Movie.update_round(round, attrs)
       _ ->
         nil
-      end
+    end
   end
 
-  defp get_movie_information(%Round{} = round) do
-    round
+  def get_movie_information(%Round{} = round), do: get_movie_information(round.title)
+  def get_movie_information(title) do
+    title
     |> build_omdb_url()
     |> HTTPoison.get()
     |> case do
@@ -27,13 +28,17 @@ defmodule MovieWagerBackend.Movie.OMDB do
           "website" => Map.get(metadata, "Website")
         }
       _ ->
-        nil
+        %{}
     end
   end
 
-  defp build_omdb_url(%Round{} = round) do
-    title = URI.encode_www_form(round.title)
+  defp build_omdb_url(title) do
+    title =
+      title
+      |> String.replace("The ", "")
+      |> URI.encode_www_form()
     omdb_api_key = Application.get_env(:movie_wager_backend, :omdbapi)[:api_key]
-    "http://www.omdbapi.com/?apikey#{omdb_api_key}=&t=#{title}"
+    year = DateTime.utc_now |> Map.fetch!(:year)
+    "http://www.omdbapi.com/?apikey=#{omdb_api_key}&t=#{title}&y=#{year}"
   end
 end
