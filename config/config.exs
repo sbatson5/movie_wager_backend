@@ -29,6 +29,9 @@ config :mime, :types, %{
 config :movie_wager_backend, :google,
   client_secret: System.get_env("GOOGLE_CLIENT_SECRET")
 
+config :movie_wager_backend, :omdbapi,
+  api_key: System.get_env("OMDB_API_KEY")
+
 config :phoenix, :format_encoders,
   "json-api": Poison
 
