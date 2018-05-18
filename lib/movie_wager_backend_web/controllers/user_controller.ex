@@ -38,7 +38,6 @@ defmodule MovieWagerBackendWeb.UserController do
 
   def show_session(conn, _) do
     google_id = Plug.Conn.get_session(conn, :google_id)
-    user = Google.get_user_by_google_id(google_id)
     case Google.get_user_by_google_id(google_id) do
       user = %User{} ->
         render(conn, "show.json-api", data: user)

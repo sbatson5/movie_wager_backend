@@ -6,7 +6,7 @@ defmodule MovieWagerBackend.Movie do
   import Ecto.Query, warn: false
   alias MovieWagerBackend.Repo
 
-  alias MovieWagerBackend.Movie.{Round,BoxofficeMojo}
+  alias MovieWagerBackend.Movie.Round
 
   def list_rounds do
     Repo.all(Round)
@@ -90,16 +90,6 @@ defmodule MovieWagerBackend.Movie do
 
   defp get_id(%{"data" => %{"id" => id}}), do: id
   defp get_id(_), do: nil
-
-  defp get_user_id(google_id) do
-    MovieWagerBackend.Google.User
-    |> where(google_id: ^google_id)
-    |> Repo.one
-    |> case do
-      user -> user.id
-      nil -> {:error, "no record found"}
-    end
-  end
 
   def update_wager(%Wager{} = wager, attrs, relationship_params) do
     attrs = get_wager_relationship_ids(relationship_params)
