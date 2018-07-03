@@ -54,6 +54,30 @@ defmodule MovieWagerBackend.Movie do
     |> Repo.all
   end
 
+  def get_highest_wager_by_round(round_id) do
+    case list_wagers_by_round(round_id) do
+      nil -> nil
+      wagers ->
+        Enum.sort(wagers, &(&1.amount > &2.amount))
+        |> List.first()
+    end
+  end
+
+  def get_lowest_wager_by_round(round_id) do
+    case list_wagers_by_round(round_id) do
+      nil -> nil
+      wagers ->
+        Enum.sort(wagers, &(&1.amount < &2.amount))
+        |> List.first()
+    end
+  end
+
+  def get_number_of_wagers_by_round(round_id) do
+    round_id
+    |> list_wagers_by_round
+    |> length()
+  end
+
   def list_wagers_by_user_and_round(user_id, round_id) do
     Wager
     |> Ecto.Query.preload([:user, :round])
